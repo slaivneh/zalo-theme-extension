@@ -3,207 +3,302 @@
   <head>
     <meta charset="UTF-8" />
     <style>
+      :root {
+        --primary: #0068ff;
+        --bg: #ffffff;
+        --text: #111827;
+        --text-sub: #6b7280;
+        --border: #e5e7eb;
+        --radius: 8px;
+      }
+
       body {
-        width: 310px;
+        width: 300px;
         padding: 12px;
         font-family:
           -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        background: #f8fafc;
-        color: #1e293b;
+        background: var(--bg);
+        color: var(--text);
         margin: 0;
+        box-sizing: border-box;
       }
+
       h3 {
         margin: 0 0 10px 0;
         font-size: 15px;
-        text-align: center;
-        color: #0068ff;
-      }
-      .card {
-        background: #fff;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        padding: 10px;
-        margin-bottom: 10px;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
-      }
-      .card-title {
-        font-size: 13px;
         font-weight: 700;
-        margin-bottom: 8px;
-        color: #0f172a;
-        border-bottom: 1px solid #f1f5f9;
-        padding-bottom: 4px;
+        text-align: center;
+        color: var(--primary);
       }
-      .row {
+
+      /* Thanh Tabs chuyển đổi */
+      .tabs {
+        display: flex;
+        background: #f3f4f6;
+        border-radius: var(--radius);
+        padding: 3px;
+        margin-bottom: 12px;
+      }
+      .tab-btn {
+        flex: 1;
+        background: transparent;
+        border: none;
+        padding: 6px 4px;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-sub);
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+      }
+      .tab-btn.active {
+        background: #ffffff;
+        color: var(--primary);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Nội dung từng Tab */
+      .tab-content {
+        display: none;
+      }
+      .tab-content.active {
+        display: block;
+      }
+
+      .group {
+        margin-bottom: 10px;
+      }
+      label {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--text-sub);
+        margin-bottom: 4px;
+      }
+
+      .row-flex {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 6px;
-        gap: 8px;
+        background: #f9fafb;
+        padding: 8px 10px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        margin-bottom: 8px;
       }
-      label {
-        font-size: 12px;
-        color: #475569;
-      }
+
       input[type="color"] {
-        width: 50px;
-        height: 26px;
-        border: 1px solid #cbd5e1;
+        -webkit-appearance: none;
+        border: none;
+        width: 28px;
+        height: 20px;
         border-radius: 4px;
         cursor: pointer;
+        background: transparent;
+      }
+      input[type="color"]::-webkit-color-swatch-wrapper {
         padding: 0;
       }
+      input[type="color"]::-webkit-color-swatch {
+        border: 1px solid var(--border);
+        border-radius: 4px;
+      }
+
       input[type="text"] {
         width: 100%;
         box-sizing: border-box;
-        padding: 5px 7px;
+        padding: 6px 8px;
         font-size: 11px;
-        border: 1px solid #cbd5e1;
-        border-radius: 4px;
-        margin-bottom: 5px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: #f9fafb;
+        margin-bottom: 6px;
+      }
+      input[type="text"]:focus {
+        outline: none;
+        border-color: var(--primary);
+        background: #fff;
+      }
+
+      .file-box {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .file-btn {
+        flex: 1;
+        background: #f3f4f6;
+        border: 1px solid var(--border);
+        padding: 5px 8px;
+        border-radius: var(--radius);
+        font-size: 11px;
+        color: var(--text-sub);
+        text-align: center;
+        cursor: pointer;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .file-btn:hover {
+        background: #e5e7eb;
       }
       input[type="file"] {
-        font-size: 11px;
-        flex: 1;
-        min-width: 0;
+        display: none;
       }
-      .file-row {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-      .btn-clear {
-        flex: none;
-        padding: 3px 8px;
-        font-size: 11px;
+
+      .clear-btn {
         background: #fee2e2;
-        color: #b91c1c;
-        border-radius: 4px;
+        color: #dc2626;
+        border: none;
+        padding: 5px 8px;
+        border-radius: var(--radius);
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
       }
-      .btn-clear:hover {
+      .clear-btn:hover {
         background: #fecaca;
       }
-      .hint {
-        font-size: 10px;
-        color: #94a3b8;
-        margin-top: 4px;
-      }
-      .btn-group {
+
+      .footer {
         display: flex;
         gap: 6px;
-        margin-top: 8px;
+        margin-top: 14px;
+        border-top: 1px solid var(--border);
+        padding-top: 10px;
       }
-      button {
+      .btn {
         flex: 1;
         padding: 8px;
         border: none;
-        border-radius: 6px;
+        border-radius: var(--radius);
         font-weight: 600;
         font-size: 12px;
         cursor: pointer;
       }
       #btnSave {
-        background: #0068ff;
+        background: var(--primary);
         color: #fff;
       }
       #btnSave:hover {
         background: #0052cc;
       }
       #btnReset {
-        background: #e2e8f0;
-        color: #475569;
+        background: #f3f4f6;
+        color: var(--text-sub);
       }
       #btnReset:hover {
-        background: #cbd5e1;
+        background: #e5e7eb;
       }
     </style>
   </head>
   <body>
-    <h3>🎨 Tùy biến Zalo Web</h3>
+    <h3>⚡ Zalo Customizer</h3>
 
-    <!-- 1. Thanh Menu trái -->
-    <div class="card">
-      <div class="card-title">1. Thanh Menu dọc (Bên trái)</div>
-      <div class="row">
-        <label>Màu nền:</label>
-        <input type="color" id="navColor" value="#0068ff" />
+    <!-- Thanh chọn Tab -->
+    <div class="tabs">
+      <button class="tab-btn active" id="tabBtn0">Bố cục</button>
+      <button class="tab-btn" id="tabBtn1">Bong bóng</button>
+    </div>
+
+    <!-- TAB 1: Giao diện nền -->
+    <div class="tab-content active" id="tab-0">
+      <div class="group">
+        <label>1. Thanh Menu dọc</label>
+        <div class="row-flex">
+          <span style="font-size: 11px">Màu nền</span>
+          <input type="color" id="navColor" value="#0068ff" />
+        </div>
+        <input type="text" id="navImg" placeholder="Link ảnh nền (URL)..." />
+        <div class="file-box">
+          <label for="navFile" class="file-btn" id="navFileName"
+            >Tải ảnh từ máy...</label
+          >
+          <input type="file" id="navFile" accept="image/*" />
+          <button
+            type="button"
+            class="clear-btn"
+            onclick="clearImg('navImg', 'navFileName')"
+          >
+            Xóa
+          </button>
+        </div>
       </div>
-      <input
-        type="text"
-        id="navImg"
-        placeholder="Link ảnh nền (hoặc chọn file bên dưới)"
-      />
-      <div class="file-row">
-        <input type="file" id="navFile" accept="image/*" />
-        <button class="btn-clear" data-key="navImg" data-file="navFile">
-          Xóa ảnh
-        </button>
+
+      <div class="group">
+        <label>2. Danh sách hội thoại</label>
+        <div class="row-flex">
+          <span style="font-size: 11px">Màu nền</span>
+          <input type="color" id="listColor" value="#ffffff" />
+        </div>
+        <input type="text" id="listImg" placeholder="Link ảnh nền (URL)..." />
+        <div class="file-box">
+          <label for="listFile" class="file-btn" id="listFileName"
+            >Tải ảnh từ máy...</label
+          >
+          <input type="file" id="listFile" accept="image/*" />
+          <button
+            type="button"
+            class="clear-btn"
+            onclick="clearImg('listImg', 'listFileName')"
+          >
+            Xóa
+          </button>
+        </div>
       </div>
-      <div class="hint">
-        * Nếu có ảnh, ảnh sẽ đè lên màu nền (bấm "Xóa ảnh" để dùng lại màu)
+
+      <div class="group">
+        <label>3. Khung đoạn chat</label>
+        <div class="row-flex">
+          <span style="font-size: 11px">Màu nền</span>
+          <input type="color" id="chatColor" value="#eef0f1" />
+        </div>
+        <input type="text" id="chatImg" placeholder="Link ảnh nền (URL)..." />
+        <div class="file-box">
+          <label for="chatFile" class="file-btn" id="chatFileName"
+            >Tải ảnh từ máy...</label
+          >
+          <input type="file" id="chatFile" accept="image/*" />
+          <button
+            type="button"
+            class="clear-btn"
+            onclick="clearImg('chatImg', 'chatFileName')"
+          >
+            Xóa
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- 2. Danh sách hội thoại -->
-    <div class="card">
-      <div class="card-title">2. Nền danh sách hội thoại</div>
-      <div class="row">
-        <label>Màu nền:</label>
-        <input type="color" id="listColor" value="#ffffff" />
+    <!-- TAB 2: Bong bóng chat -->
+    <div class="tab-content" id="tab-1">
+      <div class="group">
+        <label>Màu tin nhắn bạn gửi đi</label>
+        <div class="row-flex">
+          <span style="font-size: 11px">Chọn màu</span>
+          <input type="color" id="bubbleMeColor" value="#e5efff" />
+        </div>
       </div>
-      <input
-        type="text"
-        id="listImg"
-        placeholder="Link ảnh nền (hoặc chọn file bên dưới)"
-      />
-      <div class="file-row">
-        <input type="file" id="listFile" accept="image/*" />
-        <button class="btn-clear" data-key="listImg" data-file="listFile">
-          Xóa ảnh
-        </button>
+      <div class="group">
+        <label>Màu tin nhắn người khác</label>
+        <div class="row-flex">
+          <span style="font-size: 11px">Chọn màu</span>
+          <input type="color" id="bubbleYouColor" value="#ffffff" />
+        </div>
       </div>
-    </div>
-
-    <!-- 3. Khung chat chính -->
-    <div class="card">
-      <div class="card-title">3. Nền khung đoạn chat</div>
-      <div class="row">
-        <label>Màu nền:</label>
-        <input type="color" id="chatColor" value="#eef0f1" />
-      </div>
-      <input
-        type="text"
-        id="chatImg"
-        placeholder="Link ảnh nền (hoặc chọn file bên dưới)"
-      />
-      <div class="file-row">
-        <input type="file" id="chatFile" accept="image/*" />
-        <button class="btn-clear" data-key="chatImg" data-file="chatFile">
-          Xóa ảnh
-        </button>
+      <div class="group">
+        <label>Màu chữ trong khung chat</label>
+        <div class="row-flex">
+          <span style="font-size: 11px">Chọn màu chữ</span>
+          <input type="color" id="bubbleTextColor" value="#081c36" />
+        </div>
       </div>
     </div>
 
-    <!-- 4. Bong bóng chat -->
-    <div class="card">
-      <div class="card-title">4. Màu bong bóng chat</div>
-      <div class="row">
-        <label>Tin nhắn bạn gửi:</label>
-        <input type="color" id="bubbleMeColor" value="#e5efff" />
-      </div>
-      <div class="row">
-        <label>Tin nhắn người khác:</label>
-        <input type="color" id="bubbleYouColor" value="#ffffff" />
-      </div>
-      <div class="row">
-        <label>Màu chữ tin nhắn:</label>
-        <input type="color" id="bubbleTextColor" value="#081c36" />
-      </div>
-    </div>
-
-    <div class="btn-group">
-      <button id="btnSave">Áp dụng ngay</button>
-      <button id="btnReset">Mặc định</button>
+    <div class="footer">
+      <button class="btn" id="btnSave">Áp dụng</button>
+      <button class="btn" id="btnReset">Mặc định</button>
     </div>
 
     <script src="popup.js"></script>

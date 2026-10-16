@@ -35,14 +35,9 @@ function safeColor(value, fallback) {
 
 function safeImageUrl(value) {
   if (!value || typeof value !== "string") return "";
-  if (!/^(https?:\/\/|data:image\/)/i.test(value)) return "";
-  return value
-    .replace(/\\/g, "%5C")
-    .replace(/"/g, "%22")
-    .replace(/'/g, "%27")
-    .replace(/\(/g, "%28")
-    .replace(/\)/g, "%29")
-    .replace(/[\n\r]/g, "");
+  // Cho phép cả URL http/https lẫn chuỗi Base64 (data:image/...) do người dùng tải lên từ máy
+  if (!value.startsWith("http") && !value.startsWith("data:image/")) return "";
+  return value.replace(/[\n\r]/g, "");
 }
 
 function textOn(hex) {
@@ -74,9 +69,12 @@ function buildBgRule(color, imgUrl) {
   var img = safeImageUrl(imgUrl);
   if (img) {
     return (
-      "background: url('" +
+      'background-image: url("' +
       img +
-      "') center / cover no-repeat !important;" +
+      '") !important;' +
+      "background-size: cover !important;" +
+      "background-position: center !important;" +
+      "background-repeat: no-repeat !important;" +
       "background-color: transparent !important;"
     );
   }
@@ -210,17 +208,18 @@ function buildCss(cfg) {
     );
   }
 
-  // 3. NỀN KHUNG CHAT + PANEL THÔNG TIN BÊN PHẢI
-  // Nền đặt lên <main>, mọi lớp bên trong trong suốt
-  css.push(rule(["main"], chatBg));
+  // 3. NỀN KHUNG ĐOẠN CHAT
+  css.push(rule(["#chatView"], chatBg));
+
+  // Các lớp còn lại trong suốt
   css.push(
     rule(
       [
+        "main",
         "main > span",
         "#chatViewContainer",
         "#header",
         ".threadChat",
-        "#chatView",
         "#chatOnboard",
         ".chat-view",
         ".chat-onboard",
@@ -232,28 +231,46 @@ function buildCss(cfg) {
         ".chat-message-list",
         "#chat-box",
         ".chat-date-divider",
-        "aside.compact-chat-info",
         "aside.compact-chat-info .cp-bg",
-        "#chatInfo",
-        ".chat-info__header",
-        "#sideBodyScrollBox",
-        "#chatInfoGeneral",
-        "#chatInfoGeneral > div",
-        "#chatInfoGeneral > div > div",
-        ".chat-info-general__section",
-        ".chat-info-general__section__header",
-        ".chat-info-general__section__content",
-        ".chat-info-general__section__body",
-        ".chat-info-general__item",
-        ".chat-info-general__action",
-        ".header-info",
-        ".header-info__tool",
-        ".chat-info-file",
-        ".folder-view",
-        ".chat-info-link",
-        ".limit-media-container",
       ],
       TRANSPARENT,
+    ),
+  );
+
+  // Panel Thông tin nhóm (Hỗ trợ cả khi bật F12 lẫn Toàn màn hình)
+  css.push(
+    rule(
+      [
+        "aside div:not(.z--btn--v2):not(.zavatar):not(.img-media):not(.img-center-box):not(.z-toggle):not(.image-menu-container):not(.WEB)",
+        "aside section",
+        "aside header",
+        "#chatInfo div:not(.z--btn--v2):not(.zavatar):not(.img-media):not(.img-center-box):not(.z-toggle):not(.image-menu-container):not(.WEB)",
+        "#chatInfo section",
+        "#chatInfo header",
+        ".chat-info div:not(.z--btn--v2):not(.zavatar):not(.img-media):not(.img-center-box):not(.z-toggle):not(.image-menu-container):not(.WEB)",
+        ".chat-info section",
+        ".chat-info header",
+        "aside .cp-bg",
+        ".chat-info .cp-bg",
+      ],
+      TRANSPARENT,
+    ),
+  );
+
+  // Header (tên đoạn chat) + panel Thông tin nhóm dùng chung nền danh sách
+  css.push(
+    rule(
+      [
+        "#chatViewContainer > #header",
+        "aside.compact-chat-info",
+        "aside",
+        "#chatInfo",
+        ".chat-info",
+      ],
+      listBg +
+        "--layer-background: transparent !important;" +
+        "--layer-background-subtle: transparent !important;" +
+        "--surface-background: transparent !important;",
     ),
   );
 
@@ -297,7 +314,7 @@ function buildCss(cfg) {
     ),
   );
 
-  // 5. BANNER GHIM, THANH CÔNG CỤ, Ô NHẬP
+  // 5. BANNER GHIM, THANH CÔNG CỤ, Ô NHẬP (Dùng chung màu/ảnh nền với danh sách hội thoại)
   css.push(
     rule(
       [
@@ -314,27 +331,38 @@ function buildCss(cfg) {
         ".chat-input-content",
         ".rich-input",
       ],
-      TRANSPARENT,
+      listBg + "box-shadow: none !important;" + "border: none !important;",
     ),
   );
 
-  // 6. MÀU CHỮ KHUNG CHAT + PANEL PHẢI
+  // 6a. MÀU CHỮ VÙNG TIN NHẮN (theo nền khung chat)
   if (chatText) {
+    css.push(
+      rule(
+        [
+          ".chat-date .content",
+          ".chat-date .content span",
+          ".rich-input",
+          ".chat-box-toolbar-button i",
+          ".chat-box-input-button i",
+          ".content-title",
+          ".content-message-name",
+          ".content-message-type",
+        ],
+        "color: " + chatText + " !important;",
+      ),
+    );
+  }
+
+  // 6b. MÀU CHỮ HEADER + PANEL PHẢI (theo nền danh sách)
+  if (listText) {
     css.push(
       rule(
         [
           ".header-title",
           ".subtitle__groupmember__content",
           ".subtitle__label .truncate",
-          ".chat-date .content",
-          ".chat-date .content span",
-          ".rich-input",
           "#header i",
-          ".chat-box-toolbar-button i",
-          ".chat-box-input-button i",
-          ".content-title",
-          ".content-message-name",
-          ".content-message-type",
           ".chat-info__header__title",
           ".chat-info__header__title span",
           ".header-info__name",
@@ -350,7 +378,7 @@ function buildCss(cfg) {
           ".media-item-date__link",
           ".media-empty-text__preview span",
         ],
-        "color: " + chatText + " !important;",
+        "color: " + listText + " !important;",
       ),
     );
   }
@@ -387,7 +415,7 @@ function loadAndApply() {
       applyTheme(data);
     });
   } catch (e) {
-    // Extension vừa bị reload, F5 tab để nạp lại script
+    // Extension vừa bị reload
   }
 }
 
