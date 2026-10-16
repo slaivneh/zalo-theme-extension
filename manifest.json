@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Zalo Custom Theme Pro",
+  "version": "2.1",
+  "description": "Tùy biến toàn diện 4 khu vực cho Zalo Web",
+  "permissions": ["storage", "unlimitedStorage"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://chat.zalo.me/*"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ]
+}
